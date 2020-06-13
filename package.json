@@ -1,0 +1,36 @@
+{
+  "name": "gridsome-remark-figure-caption",
+  "version": "1.0.0",
+  "description": "A gridsome remark plugin to transform markdown image to figure with caption element",
+  "main": "src/plugin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Quang Trinh <khacquang.trinh@gmail.com>",
+  "homepage": "https://github.com/tkhquang/gridsome-remark-figure-caption",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkhquang/gridsome-remark-figure-caption.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tkhquang/gridsome-remark-figure-caption/issues"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "vue",
+    "remark",
+    "gridsome",
+    "gridsome-plugin",
+    "markdown",
+    "image",
+    "images",
+    "figure",
+    "caption"
+  ],
+  "dependencies": {
+    "unist-util-visit": "^2.0.2"
+  }
+}
