@@ -90,6 +90,7 @@ const getClassProp = (className) => {
 };
 
 const classRegex = /\sclass="(.*?)"\s/gi;
+
 const getImageNodeWithClasses = (node, classes) => {
   // isExternal
   if (!isInternal(node)) {
@@ -98,6 +99,12 @@ const getImageNodeWithClasses = (node, classes) => {
       data: {
         ...getClassProp(classes)
       }
+    };
+  }
+
+  if (!classes) {
+    return {
+      ...node
     };
   }
 
