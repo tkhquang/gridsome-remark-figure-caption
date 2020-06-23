@@ -13,7 +13,6 @@ Simple plugin for `@gridsome/transformer-remark` to transforms: `![Some Text](pa
 
 ```
 npm install -s gridsome-remark-figure-caption
-
 ```
 
 ## Setup

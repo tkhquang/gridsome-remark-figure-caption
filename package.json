@@ -1,6 +1,6 @@
 {
   "name": "gridsome-remark-figure-caption",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A gridsome remark plugin to transform markdown image to figure with caption element",
   "main": "src/plugin.js",
   "scripts": {
@@ -31,6 +31,8 @@
     "caption"
   ],
   "dependencies": {
+    "hast-util-whitespace": "^1.0.4",
+    "unist-util-remove": "^2.0.0",
     "unist-util-visit": "^2.0.2"
   }
 }
