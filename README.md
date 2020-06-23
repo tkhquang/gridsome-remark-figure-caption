@@ -1,14 +1,12 @@
 # gridsome-remark-figure-caption
 
-Simple plugin for `@gridsome/transformer-remark` to transforms: `![image with description](path-to-image.jpg)` into:
+Simple plugin for `@gridsome/transformer-remark` to transforms: `![Some Text](path-to-image.jpg)` into:
 
 ```html
-<div>
-  <figure>
-    <img src="path-to-image.jpg">
-    <figcaption>image with description</figcaption>
-  </figure>
-</div>
+<figure>
+  <img src="path-to-image.jpg">
+  <figcaption>Some Text</figcaption>
+</figure>
 ```
 
 ## Install
@@ -37,7 +35,6 @@ module.exports = {
           "gridsome-remark-figure-caption",
           {
             // All the options here are optional
-            wrapperClassName: "md-figure-wrapper",
             figureClassName: "md-figure-block",
             imageClassName: "md-figure-image",
             captionClassName: "md-figure-caption"
@@ -54,7 +51,6 @@ module.exports = {
 
 | Name | Description |
 | ---- | ----------- |
-| `wrapperClassName` | class for the wrapper which wraps the `figure` element |
 | `figureClassName`  | class for the wrapped `figure` element |
 | `imageClassName`   | class for the wrapped `img` element |
 | `captionClassName` | class for the wrapped `figcaption` element |

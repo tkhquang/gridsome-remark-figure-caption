@@ -1,67 +1,96 @@
 const visit = require("unist-util-visit");
 
 module.exports = (options) => {
-  const {
-    wrapperClassName,
-    figureClassName,
-    imageClassName,
-    captionClassName
-  } = options;
-
   return (tree) => {
     visit(
       tree,
-      (node) => isImageWithAlt(node),
+      (node) => isParagraphWithImageNode(node) || isHTMLImageNode(node),
       (node, index, parent) => {
-        if (!isImageWithoutCaption(parent.children)) {
-          return;
+        if (isHTMLImageNode(node)) {
+          if (!isImageWithoutCaption(parent.children)) {
+            return;
+          }
+
+          const figure = createNodes(node, options);
+
+          parent.type = figure.type;
+          parent.children = figure.children;
+          parent.data = figure.data;
         }
 
-        const figcaption = {
-          type: "figcaption",
-          children: [
-            {
-              type: "text",
-              value: node.alt
-            }
-          ],
-          data: {
-            hName: "figcaption",
-            ...getClassProp(captionClassName)
+        if (isParagraphWithImageNode(node)) {
+          if (!isImageWithoutCaption(node.children)) {
+            return;
           }
-        };
 
-        const figure = {
-          type: "figure",
-          children: [getImageNodeWithClasses(node, imageClassName), figcaption],
-          data: {
-            hName: "figure",
-            ...getClassProp(figureClassName)
-          }
-        };
+          const child = node.children.find(
+            (child) =>
+              child.type === "image" && Boolean(child.alt) && Boolean(child.url)
+          );
 
-        node.type = figure.type;
-        node.children = figure.children;
-        node.data = figure.data;
+          const figure = createNodes(child, options);
 
-        parent.type = "figwrapper";
-        parent.data = {
-          hName: "div",
-          ...getClassProp(wrapperClassName)
-        };
+          node.type = figure.type;
+          node.children = figure.children;
+          node.data = figure.data;
+        }
       }
     );
   };
 };
 
-const isImageWithAlt = (node) => {
+const createNodes = (
+  imageNode,
+  { figureClassName, imageClassName, captionClassName }
+) => {
+  const figcaption = {
+    type: "figcaption",
+    children: [
+      {
+        type: "text",
+        value: imageNode.alt
+      }
+    ],
+    data: {
+      hName: "figcaption",
+      ...getClassProp(captionClassName)
+    }
+  };
+
+  const figure = {
+    type: "figure",
+    children: [getImageNodeWithClasses(imageNode, imageClassName), figcaption],
+    data: {
+      hName: "figure",
+      ...getClassProp(figureClassName)
+    }
+  };
+
+  return figure;
+};
+
+const isImageNodeWithAlt = (node) => {
+  return node.type === "image" && Boolean(node.alt) && Boolean(node.url);
+};
+
+const isParagraphWithImageNode = (node) => {
   return (
-    (node.type === "image" && Boolean(node.url) && Boolean(node.alt)) ||
-    (node.type === "html" &&
-      Boolean(node.alt) &&
-      Boolean(node.url) &&
-      /^<img\s/.test(node.value))
+    node.type === "paragraph" &&
+    node.children.some((child) => isImageNodeWithAlt(child))
   );
+};
+
+const isHTMLImageNode = (node) => {
+  return (
+    node.type === "html" &&
+    Boolean(node.alt) &&
+    Boolean(node.url) &&
+    /^<img\s/.test(node.value)
+  );
+};
+
+const isImageWithAlt = (node) => {
+  return isImageNodeWithAlt(node) || isHTMLImageNode(node);
 };
 
 const isImageWithoutCaption = (children) => {
@@ -73,10 +102,6 @@ const isImageWithoutCaption = (children) => {
           (children[idx + 1] && children[idx + 1].type !== "figcaption"))
     ) !== -1
   );
-};
-
-const isInternal = (node) => {
-  return node.type === "html" && /^<img\s/.test(node.value);
 };
 
 const getClassProp = (className) => {
@@ -92,8 +117,8 @@ const getClassProp = (className) => {
 const classRegex = /\sclass="(.*?)"\s/gi;
 
 const getImageNodeWithClasses = (node, classes) => {
-  // isExternal
-  if (!isInternal(node)) {
+  // Is Image type node
+  if (!isHTMLImageNode(node)) {
     return {
       ...node,
       data: {
@@ -102,13 +127,13 @@ const getImageNodeWithClasses = (node, classes) => {
     };
   }
 
+  // is HTML Image node
   if (!classes) {
     return {
       ...node
     };
   }
 
-  // isInternal
   // Bruteforce adding classes for now
   const hasClass = classRegex.exec(node.value);
 
