@@ -1,38 +1,36 @@
 const visit = require("unist-util-visit");
+const whiteSpace = require("hast-util-whitespace");
+const remove = require(`unist-util-remove`);
 
 module.exports = (options) => {
   return (tree) => {
+    // Unwrap the images inside Paragraph
+    visit(tree, "paragraph", (node, index, parent) => {
+      if (hasOnlyImages(node)) {
+        return;
+      }
+
+      remove(node, "text");
+
+      parent.children.splice(index, 1, ...node.children);
+
+      return index;
+    });
+
+    // Wrap image modes in figure
     visit(
       tree,
-      (node) => isParagraphWithImageNode(node) || isHTMLImageNode(node),
+      (node) => isImageWithAlt(node),
       (node, index, parent) => {
-        if (isHTMLImageNode(node)) {
-          if (!isImageWithoutCaption(parent.children)) {
-            return;
-          }
-
-          const figure = createNodes(node, options);
-
-          parent.type = figure.type;
-          parent.children = figure.children;
-          parent.data = figure.data;
+        if (isImageWithCaption(parent)) {
+          return;
         }
 
-        if (isParagraphWithImageNode(node)) {
-          if (!isImageWithoutCaption(node.children)) {
-            return;
-          }
+        const figure = createNodes(node, options);
 
-          const child = node.children.find((child) =>
-            isImageNodeWithAlt(child)
-          );
-
-          const figure = createNodes(child, options);
-
-          node.type = figure.type;
-          node.children = figure.children;
-          node.data = figure.data;
-        }
+        node.type = figure.type;
+        node.children = figure.children;
+        node.data = figure.data;
       }
     );
   };
@@ -68,23 +66,19 @@ const createNodes = (
   return figure;
 };
 
+const hasOnlyImages = (node) => {
+  return node.children.every((child) => {
+    return child.type === "image" || whiteSpace(child);
+  });
+};
+
 const isImageNodeWithAlt = (node) => {
   return node.type === "image" && Boolean(node.alt) && Boolean(node.url);
 };
 
-const isParagraphWithImageNode = (node) => {
-  return (
-    node.type === "paragraph" &&
-    node.children.some((child) => isImageNodeWithAlt(child))
-  );
-};
-
 const isHTMLImageNode = (node) => {
   return (
-    node.type === "html" &&
-    Boolean(node.alt) &&
-    Boolean(node.url) &&
-    /^<img\s/.test(node.value)
+    node.type === "html" && Boolean(node.alt) && /^<img\s/.test(node.value)
   );
 };
 
@@ -92,14 +86,10 @@ const isImageWithAlt = (node) => {
   return isImageNodeWithAlt(node) || isHTMLImageNode(node);
 };
 
-const isImageWithoutCaption = (children) => {
+const isImageWithCaption = (parent) => {
   return (
-    children.findIndex(
-      (child, idx) =>
-        isImageWithAlt(child) &&
-        (!children[idx + 1] ||
-          (children[idx + 1] && children[idx + 1].type !== "figcaption"))
-    ) !== -1
+    parent.type === "figure" &&
+    parent.children.some((child) => child.type === "figcaption")
   );
 };
 
