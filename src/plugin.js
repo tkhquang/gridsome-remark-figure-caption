@@ -1,10 +1,10 @@
 const visit = require("unist-util-visit");
 const whiteSpace = require("hast-util-whitespace");
-const remove = require(`unist-util-remove`);
+const remove = require("unist-util-remove");
 
 module.exports = (options) => {
   return (tree) => {
-    // Unwrap the images inside Paragraph
+    // Unwrap the images inside Paragraphs
     visit(tree, "paragraph", (node, index, parent) => {
       if (hasOnlyImages(node)) {
         return;
@@ -17,7 +17,7 @@ module.exports = (options) => {
       return index;
     });
 
-    // Wrap image modes in figure
+    // Wrap image nodes in figure
     visit(
       tree,
       (node) => isImageWithAlt(node),
