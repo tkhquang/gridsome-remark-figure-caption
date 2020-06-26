@@ -6,7 +6,7 @@ module.exports = (options) => {
   return (tree) => {
     // Unwrap the images inside Paragraphs
     visit(tree, "paragraph", (node, index, parent) => {
-      if (hasOnlyImages(node)) {
+      if (!hasOnlyImages(node)) {
         return;
       }
 
