@@ -1,6 +1,6 @@
 # gridsome-remark-figure-caption
 
-Simple plugin for `@gridsome/transformer-remark` to transforms: `![Some Text](path-to-image.jpg)` into:
+Simple plugin for `@gridsome/transformer-remark` to transform `![Some Text](path-to-image.jpg)` into:
 
 ```html
 <figure>
