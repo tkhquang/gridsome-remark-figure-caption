@@ -32,6 +32,8 @@
   ],
   "dependencies": {
     "hast-util-whitespace": "^1.0.4",
+    "remark-parse": "^9.0.0",
+    "unified": "^9.2.0",
     "unist-util-remove": "^2.0.0",
     "unist-util-visit": "^2.0.2"
   }
