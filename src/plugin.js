@@ -1,6 +1,8 @@
 const visit = require("unist-util-visit");
 const whiteSpace = require("hast-util-whitespace");
 const remove = require("unist-util-remove");
+const unified = require('unified')
+const markdown = require('remark-parse')
 
 module.exports = (options) => {
   return (tree) => {
@@ -40,14 +42,24 @@ const createNodes = (
   imageNode,
   { figureClassName, imageClassName, captionClassName }
 ) => {
-  const figcaption = {
-    type: "figcaption",
-    children: [
+
+  figchildren = null;
+  try {
+    var captionContent = unified().use(markdown).parse(imageNode.alt);
+    figchildren = captionContent.children[0].children; // children of first paragraph
+  } catch (e) {
+    console.log('figure-caption-plugin: Failed to parse markdown for image - using plain txt as fallback: ' + imageNode.alt);
+    figchildren = [
       {
         type: "text",
         value: imageNode.alt
       }
-    ],
+    ];
+  }
+
+  const figcaption = {
+    type: "figcaption",
+    children: figchildren,
     data: {
       hName: "figcaption",
       ...getClassProp(captionClassName)
