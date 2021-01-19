@@ -4,7 +4,7 @@ Simple plugin for `@gridsome/transformer-remark` to transform `![Some Text](path
 
 ```html
 <figure>
-  <img src="path-to-image.jpg">
+  <img src="path-to-image.jpg" />
   <figcaption>Some Text</figcaption>
 </figure>
 ```
@@ -36,22 +36,21 @@ module.exports = {
             // All the options here are optional
             figureClassName: "md-figure-block",
             imageClassName: "md-figure-image",
-            captionClassName: "md-figure-caption"
-          }
-        ]
-      ]
-    }
-  }
-}
-
+            captionClassName: "md-figure-caption",
+          },
+        ],
+      ],
+    },
+  },
+};
 ```
 
 ## Configuration options
 
-| Name | Description |
-| ---- | ----------- |
-| `figureClassName`  | class for the wrapped `figure` element |
-| `imageClassName`   | class for the wrapped `img` element |
+| Name               | Description                                |
+| ------------------ | ------------------------------------------ |
+| `figureClassName`  | class for the wrapped `figure` element     |
+| `imageClassName`   | class for the wrapped `img` element        |
 | `captionClassName` | class for the wrapped `figcaption` element |
 
 Omit any of the options will create the tag with no specified class names.
