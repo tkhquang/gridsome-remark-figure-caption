@@ -4,6 +4,8 @@ const remove = require("unist-util-remove");
 const unified = require('unified')
 const markdown = require('remark-parse')
 
+const imageTypes = ['image', 'g-image'];
+
 module.exports = (options) => {
   return (tree) => {
     // Unwrap the images inside Paragraphs
@@ -80,12 +82,12 @@ const createNodes = (
 
 const hasOnlyImages = (node) => {
   return node.children.every((child) => {
-    return child.type === "image" || whiteSpace(child);
+    return imageTypes.includes(child.type) || whiteSpace(child);
   });
 };
 
 const isImageNodeWithAlt = (node) => {
-  return node.type === "image" && Boolean(node.alt) && Boolean(node.url);
+  return imageTypes.includes(node.type) && Boolean(node.alt) && Boolean(node.url);
 };
 
 const isHTMLImageNode = (node) => {
