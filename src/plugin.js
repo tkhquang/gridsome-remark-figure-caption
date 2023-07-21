@@ -30,7 +30,7 @@ module.exports = (options) => {
           return;
         }
 
-        const figure = createNodes(node, options);
+        const figure = createNodes(node, options || {});
 
         node.type = figure.type;
         node.children = figure.children;
